@@ -1,0 +1,35 @@
+﻿@model IEnumerable<Pizza_Shop.Models.Topping>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Ingredients Available:</h1>
+
+<p>
+    <a asp-action="Create">Add Ingredients</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                <b>Toppings Available:</b>
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                <i>@Html.DisplayFor(modelItem => item.ToppingName)</i>
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.ToppingID">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.ToppingID">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.ToppingID">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

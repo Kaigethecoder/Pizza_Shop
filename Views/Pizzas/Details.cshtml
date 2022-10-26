@@ -1,0 +1,40 @@
+﻿@model Pizza_Shop.Models.Pizza
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Pizza</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            <b>Pizza</b>
+        </dt>
+        <dd class = "col-sm-10">
+            <i>"@Html.DisplayFor(model => model.PizzaName)"</i>
+        </dd>
+        <dt class="col-sm-2">
+            <b>Toppings</b>
+        </dt>
+        <dd class="col-sm-10">
+            <table class="table">
+                @foreach(var item in Model.PizzaToppings)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Topping.ToppingName)
+                        </td>
+                        
+                    </tr>
+                }
+            </table>
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.PizzaID">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

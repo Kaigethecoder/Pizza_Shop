@@ -1,0 +1,44 @@
+﻿@model Pizza_Shop.Models.PizzaForm
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1><b>Keep the name similar to avoid confusion with other pizzas and make sure pizza contains at least one topping.</b></h1>
+
+<h4><i>Make sure there isn't any pizzas with the same toppings before making your changes.    You're starting from scratch so once you hit save you could lose your original pizza if it is a duplicate.</i></h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+           @* <input type="hidden" asp-for="PizzaID" />*@
+            <div class="form-group">
+                <label asp-for="PizzaName" class="control-label">Name</label>
+                <input asp-for="PizzaName" class="form-control" />
+                <span asp-validation-for="PizzaName" class="text-danger"></span>
+            </div>
+            <div>
+                <p><i>Customize your masterpiece</i></p>
+            </div>
+            @foreach (var topping in Model.AvailableToppings)
+            {
+                <div class="form-group">
+                    <label asp-for="@topping.ToppingName" class="control-label">@topping.ToppingName</label>
+                    <input type="checkbox" id="@topping.ToppingID" name="ToppingsSelected" value="@topping.ToppingID" />
+                </div>
+            }
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
