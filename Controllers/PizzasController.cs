@@ -60,7 +60,7 @@ namespace Pizza_Shop.Controllers
             bool duplicate = true;
             if (pizza.ToppingsSelected != null)
             {
-                duplicate = DuplicateToppings(pizza.ToppingsSelected) || DuplicateName(pizza.PizzaName);
+                duplicate = DuplicateToppings(pizza.ToppingsSelected, null) || DuplicateName(pizza.PizzaName);
                 if (duplicate)
                 {
                     ModelState.AddModelError("", "Looks like we already have a pizza like that.");
@@ -129,7 +129,12 @@ namespace Pizza_Shop.Controllers
             if (pizza.ToppingsSelected != null)
             {
                 duplicateName = DuplicateName(pizza.PizzaName);
-                
+                duplicateToppings = DuplicateToppings(pizza.ToppingsSelected, pizza.ID);
+                if (duplicateToppings)
+                {
+                    ModelState.AddModelError("", "Another pizza has that topping combination already!");
+                }
+
                 if (!duplicateName)
                 {
                     ModelState.AddModelError("", "Try to keep the name similar to avoid confusion with other pizzas.");
@@ -137,7 +142,7 @@ namespace Pizza_Shop.Controllers
             }
 
             var updatedPizza = await _context.Pizza.FindAsync(pizza.ID);
-            if (duplicateName)
+            if (duplicateName && !duplicateToppings)
             {
                 updatedPizza.PizzaName = pizza.PizzaName;
                 foreach (var pt in await _context.PizzaTopping.ToListAsync())
@@ -147,14 +152,6 @@ namespace Pizza_Shop.Controllers
                         _context.Remove(pt);
                         await _context.SaveChangesAsync();
                     }
-                }
-
-                duplicateToppings = DuplicateToppings(pizza.ToppingsSelected);
-                if (duplicateToppings)
-                {
-                    _context.Remove(updatedPizza);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Create));
                 }
 
                 foreach (var topping in pizza.ToppingsSelected)
@@ -214,12 +211,17 @@ namespace Pizza_Shop.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-        private bool DuplicateToppings(List<int> toppingsSelected)
+        private bool DuplicateToppings(List<int> toppingsSelected, int? existingPizzaId)
         {
             bool duplicate = false;
             foreach (var p in _context.Pizza.ToList())
             {
                 var pToppings = new List<int>();
+                if (p.PizzaID == existingPizzaId)
+                {
+                    continue;
+                }
+
                 foreach (var pt in _context.PizzaTopping.ToList())
                 {
                     if (p.PizzaID == pt.PizzaID)
